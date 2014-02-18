@@ -17,9 +17,15 @@ class User extends Ordered[User] with UsesDataStore with DbEquality[User] {
 
   @Unique
   @Column(allowsNull="false")
+  private[this] var _usernameR: String = _
+  def usernameR: String = _usernameR
+  def usernameR_=(theUsernameR: String) { _usernameR = theUsernameR }
+  
+  @Column(allowsNull="false")
   private[this] var _username: String = _
   def username: String = _username
-  def username_=(theUsername: String) { _username = theUsername }
+  def username_=(theUsername: String) { _username = theUsername
+    usernameR = theUsername.toLowerCase }
   
   @Column(allowsNull="false")
   private[this] var _first: String = _
