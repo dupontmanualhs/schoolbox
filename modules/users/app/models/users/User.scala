@@ -191,6 +191,9 @@ trait QUser extends PersistableExpression[User] {
   private[this] lazy val _username: StringExpression = new StringExpressionImpl(this, "_username")
   def username: StringExpression = _username
   
+  private[this] lazy val _usernameR: StringExpression = new StringExpressionImpl(this, "_usernameR")
+  def usernameR: StringExpression = _usernameR
+  
   private[this] lazy val _first: StringExpression = new StringExpressionImpl(this, "_first")
   def first: StringExpression = _first
   
