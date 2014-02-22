@@ -63,6 +63,7 @@ object TestData extends UsesDataStore {
           jack, fitzgerald, tyler, meriadoc, peregrin, mack, andrew,
           jordan, emma, laura, john, bobby, eric,
           reg, hank))
+      val jacob = new User ("jacob", "JacobName", None, "Berdichevsky", None, Gender.Male, "gmail@gmail","jb123")
       
       // Roles
       // teachers
