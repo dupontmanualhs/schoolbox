@@ -874,8 +874,12 @@ class Books @Inject()(implicit config: Config) extends Controller with UsesDataS
           Section.getBySectionId(sectionId) match {
             case None => Redirect(routes.Books.printSingleSection)
             case Some(s) => {
-              makeSectionBarcodes(List(s))
-              Redirect(routes.Books.displaySectionPdf)
+              if (s.students().length > 0) {
+                makeSectionBarcodes(List(s))
+                Redirect(routes.Books.displaySectionPdf)
+              } else {
+                Redirect(routes.Books.printSingleSection).flashing("error" -> "There are no students in this section!")
+              }
             }
           }
         }
