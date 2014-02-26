@@ -25,16 +25,16 @@ object ApplicationBuild extends Build {
   )
 
   val users = play.Project("users", appVersion, path = file("modules/users")).settings(
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.10.3",
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6", "-bootclasspath", "/usr/lib/jvm/java-6-oracle/jre/lib/rt.jar"),
     scalacOptions ++= Seq("-deprecation", "-feature"),
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",  
     libraryDependencies ++= commonDependencies)
       
   val courses = play.Project("courses", appVersion, path = file("modules/courses")).settings(
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.10.3",
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6", "-bootclasspath", "/usr/lib/jvm/java-6-oracle/jre/lib/rt.jar"),
-    scalacOptions ++= Seq("-deprecation", "-feature"),
+    scalacOptions in ThisBuild ++= Seq("-deprecation", "-feature"),
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"  
   ).dependsOn(users)
 
@@ -53,8 +53,8 @@ object ApplicationBuild extends Build {
     "com.itextpdf" % "itextpdf" % "5.4.2",
     "org.tukaani" % "xz" % "1.3",
     "javax.mail" % "mail" % "1.4.7",
-    "net.sourceforge.htmlunit" % "htmlunit" % "2.12" % "test",
-    "org.seleniumhq.selenium" % "selenium-java" % "2.33.0" % "test") ++ jsDependencies
+    "net.sourceforge.htmlunit" % "htmlunit" % "2.13" % "test",
+    "org.seleniumhq.selenium" % "selenium-java" % "2.39.0" % "test") ++ jsDependencies
 
   def customLessEntryPoints(base: File): PathFinder = (base / "app" / "assets" / "stylesheets" * "*.less")
 
