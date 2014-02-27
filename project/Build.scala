@@ -37,6 +37,13 @@ object ApplicationBuild extends Build {
     scalacOptions in ThisBuild ++= Seq("-deprecation", "-feature"),
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"  
   ).dependsOn(users)
+  
+  val fieldTrips = play.Project("field-trips", appVersion, path = file("modules/field-trips")).settings(
+    scalaVersion := "2.10.3",
+    javacOptions ++= Seq("-source", "1.6", "-target", "1.6", "-bootclasspath", "/usr/lib/jvm/java-6-oracle/jre/lib/rt.jar"),
+    scalacOptions in ThisBuild ++= Seq("-deprecation", "-feature"),
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+  ).dependsOn(courses)
 
   val jsDependencies = Seq(
     "org.webjars" % "tinymce-jquery" % "3.4.9",
