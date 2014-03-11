@@ -37,6 +37,13 @@ object ApplicationBuild extends Build {
     scalacOptions in ThisBuild ++= Seq("-deprecation", "-feature"),
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"  
   ).dependsOn(users)
+  
+  val testBank = play.Project("testbank", appVersion, path = file("modules/testbank")).settings(
+    scalaVersion := "2.10.3",
+    javacOptions ++= Seq("-source", "1.6", "-target", "1.6", "-bootclasspath", "/usr/lib/jvm/java-6-oracle/jre/lib/rt.jar"),
+    scalacOptions ++= Seq("-deprecation", "-feature"),
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+  ).dependsOn(users, courses)
 
   val jsDependencies = Seq(
     "org.webjars" % "tinymce-jquery" % "3.4.9",
@@ -44,7 +51,7 @@ object ApplicationBuild extends Build {
     "org.webjars" % "datatables-bootstrap" % "2-20120201-1")
 
   val appDependencies = Seq(
-    "org.scala-lang" % "scala-compiler" % "2.10.2",
+    "org.scala-lang" % "scala-compiler" % "2.10.3",
     "org.joda" % "joda-convert" % "1.3.1",
     "org.apache.poi" % "poi" % "3.9",
     "org.apache.poi" % "poi-ooxml" % "3.9",
