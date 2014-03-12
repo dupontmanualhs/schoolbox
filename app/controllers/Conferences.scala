@@ -29,9 +29,10 @@ import controllers.users.VisitRequest
 import controllers.users.PermissionRequired
 import play.api.templates.Html
 import org.joda.time.format.DateTimeFormat
+import com.typesafe.scalalogging.slf4j.Logging
 
 @Singleton
-class Conferences @Inject()(implicit config: Config) extends Controller with UsesDataStore {
+class Conferences @Inject()(implicit config: Config) extends Controller with Logging with UsesDataStore {
   val dateOrdering = implicitly[Ordering[org.joda.time.ReadablePartial]]
   import dateOrdering._
 
@@ -313,6 +314,7 @@ class Conferences @Inject()(implicit config: Config) extends Controller with Use
       (Session.getById(sessionId), Teacher.getById(teacherId)) match {
         case (Some(session), Some(teacher)) => {
           val ta = new TeacherActivation(session, teacher, None)
+          logger.debug("Activation of Conferences")
           pm.makePersistent(ta)
           Redirect(routes.Conferences.eventForTeacher(session.event.id)).flashing("message" -> "Conference scheduling was activated.")
         }
@@ -879,19 +881,7 @@ object Conferences {
   }
   
   def getParam(param: String)(implicit map: Map[String, Seq[String]]): String = getParameter(param, map)
-}
-
-/*object ConferencesMenu {
-  val conferencesDefault = new MenuItem("Conferences", "menu_conferences", Some(controllers.routes.Conferences.index.toString), Nil)
-  val sessions = new MenuItem("Current Sessions", "menu_sessions", Some(controllers.routes.Conferences.index.toString), Nil)
-  def myConferences(session: Session) = new MenuItem("My Conferences", "menu_conferences", Some(controllers.routes.Conferences.myConferences(session.id).toString), Nil)
-  def myStudents(guardian: Guardian, session: Session) = {
-    val students = guardian.children.toList
-    val sublist: List[MenuItem] = if(students.size == 0) List(new MenuItem("You have no students.", "menu_nostudents", None, Nil))
-                  else students.map(s => { 
-                    new MenuItem(s.formalName, "menu_conf"+s.formalName, 
-                        Option(controllers.routes.Conferences.studentClasses(session.id, s.studentNumber).toString), Nil)
-                    })
+})
     new MenuItem("Schedule for a Student", "menu_schedulestudents", None, Nil, sublist)
   }
   

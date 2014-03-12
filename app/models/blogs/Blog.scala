@@ -3,7 +3,7 @@ package models.blogs
 import javax.jdo.annotations._
 import org.datanucleus.query.typesafe._
 import org.datanucleus.api.jdo.query._
-import models.users.Role
+import models.users.{ Role, QRole }
 
 import config.users.UsesDataStore
 
@@ -70,14 +70,10 @@ object QBlog {
 
 object Blog extends UsesDataStore {
   def listUserBlogs(role: Role): List[Blog] = {
-    Role.getById(role.id) match {
-      case None => Nil
-      case Some(realRole) => {
          val cand = QBlog.candidate
-         dataStore.pm.query[Blog].filter(cand.owner.eq(realRole)).executeList()
+         val ownerVar = QRole.variable("ownerVar")
+         dataStore.pm.query[Blog].filter(cand.owner.eq(ownerVar).and(ownerVar.id.eq(role.id))).executeList()
       }
-    }
-  }
 
   def getById(id: Long): Option[Blog] = {
     val cand = QBlog.candidate

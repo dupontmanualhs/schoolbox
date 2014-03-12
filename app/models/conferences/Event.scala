@@ -33,7 +33,8 @@ class Event extends UsesDataStore with DbEquality[Event] {
   
   def sessions: List[Session] = dataStore.execute { pm => 
     val cand = QSession.candidate
-    pm.query[Session].filter(cand.event.eq(this)).orderBy(cand.startTime.asc).executeList()
+    val eventVar = QSession.variable("eventVar")
+    pm.query[Session].filter(cand.event.eq(eventVar).and(eventVar.id.eq(this.id))).orderBy(cand.startTime.asc).executeList()
   }
   
   override def toString(): String = s"Conference Event: ${this.name}"

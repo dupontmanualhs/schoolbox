@@ -107,10 +107,11 @@ class Title extends UsesDataStore {
 
   def howManyCopies(): Int = {
     val pgVar = QPurchaseGroup.variable("pg")
+    val titleVar = QTitle.variable("titleVar")
     val copyCand = QCopy.candidate
     dataStore.pm.query[Copy].filter(copyCand.isLost.eq(false).and(
-      copyCand.purchaseGroup.eq(pgVar)).and(
-        pgVar.title.eq(this)).and(copyCand.deleted.eq(false))).executeList().length
+      copyCand.purchaseGroup.eq(pgVar)).and(pgVar.title.eq(titleVar)).and(
+        titleVar.id.eq(this.id)).and(copyCand.deleted.eq(false))).executeList().length
   }
 
   def howManyCheckedOut(): Int = {

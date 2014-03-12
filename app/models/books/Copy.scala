@@ -51,7 +51,8 @@ class Copy extends UsesDataStore {
 
   def isCheckedOut: Boolean = {
     val cand = QCheckout.candidate
-    dataStore.pm.query[Checkout].filter(cand.copy.eq(this).and(cand.endDate.eq(null.asInstanceOf[java.sql.Date]))).executeList().nonEmpty
+    val copyVar = QCopy.variable("copyVar")
+    dataStore.pm.query[Checkout].filter(cand.copy.eq(copyVar).and(copyVar.id.eq(this.id)).and(cand.endDate.eq(null.asInstanceOf[java.sql.Date]))).executeList().nonEmpty
   }
 
   //TODO Fix this so that it works
@@ -84,10 +85,10 @@ object Copy extends UsesDataStore {
       val isbn = barcode.substring(0, 13)
       val copyNumber = barcode.substring(18).toInt
       val cand = QCopy.candidate
+      val copyId = QCopy.variable("copyId")
       val titleVar = QTitle.variable("titleVar")
       val pgVar = QPurchaseGroup.variable("pgVar")
-      dataStore.pm.query[Copy].filter(cand.number.eq(copyNumber).and(cand.purchaseGroup.eq(pgVar)).and(
-          pgVar.title.eq(titleVar)).and(titleVar.isbn.eq(isbn))).executeOption()
+      dataStore.pm.query[Copy].filter(cand.number.eq(copyNumber)).executeOption()
     } else {
       None
     }
@@ -98,7 +99,8 @@ object Copy extends UsesDataStore {
     val cand = QCopy.candidate
     val nTitle = pGroup.title
     val pgVar = QPurchaseGroup.variable("pgVar")
-    val allCopies: List[Copy] = pm.query[Copy].filter(pgVar.title.eq(nTitle)).orderBy(cand.number.desc).executeList()
+    val titleVar = QTitle.variable("titleVar")
+    val allCopies: List[Copy] = pm.query[Copy].filter(pgVar.title.eq(titleVar).and(titleVar.id.eq(nTitle.id))).orderBy(cand.number.desc).executeList()
 
     val firstNum = if (!allCopies.isEmpty) {
       allCopies.apply(0).number + 1
