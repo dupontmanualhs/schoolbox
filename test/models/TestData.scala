@@ -139,8 +139,8 @@ object TestData extends UsesDataStore {
       val eng3B = new Course("English 3B", "224424342", englishDept)
       val usHistB = new Course("US History B", "432239242", socialStudiesDept)
       val worldHistB = new Course("World History B", "424239242", socialStudiesDept)
-      val planning = new Course("Planning", "909989980", miscDept)
-      val studySkills = new Course("Study Skills", "324342440", miscDept)
+      val planning = new Course("Planning", "909989980", miscDept, false)
+      val studySkills = new Course("Study Skills", "324342440", miscDept, false)
       pm.makePersistentAll(List(scienceDept, englishDept, mathematicsDept, socialStudiesDept,
         bioA, chemA, alg1A, alg2A, geoA, eng1A, eng2A, eng3A, usHistA, worldHistA,
         bioB, chemB, alg1B, alg2B, geoB, eng1B, eng2B, eng3B, usHistB, worldHistB,
@@ -260,6 +260,9 @@ object TestData extends UsesDataStore {
       richardTeacher.addPermission(Conferences.Permissions.Manage)
       maryTeacher.addPermission(Conferences.Permissions.Manage)
       
+      //makeMasteryData
+      mastery.QuizData.load(debug)
+            
       //makeBookData(debug)
       /*
       if (debug) println("Creating the blagosphere")
@@ -304,8 +307,6 @@ object TestData extends UsesDataStore {
         Some("11 x 8.8 x 1.6 inches"), Some(5.2), true, new Date(System.currentTimeMillis()), None)
 
 
-      //makeMasteryData
-      mastery.QuizData.load(debug)
 
       //makeLockerData(debug)
       if (debug) println("Creating Lockers...")
