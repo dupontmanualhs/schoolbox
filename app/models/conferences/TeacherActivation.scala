@@ -8,6 +8,7 @@ import util.QueryClass
 import config.users.UsesDataStore
 import models.users.DbEquality
 import org.joda.time.LocalTime
+import models.courses.QTeacher
 
 @PersistenceCapable(detachable="true")
 class TeacherActivation extends UsesDataStore with DbEquality[TeacherActivation] {
@@ -56,8 +57,10 @@ class TeacherActivation extends UsesDataStore with DbEquality[TeacherActivation]
   
   def appointments(): List[Slot] = {
     val slotCand = QSlot.candidate()
-    dataStore.pm.query[Slot].filter(slotCand.teacher.eq(this.teacher).and(
-        slotCand.session.eq(this.session))).orderBy(slotCand.startTime.asc).executeList()
+    val teacherVar = QTeacher.variable("teacherVar")
+    val sessionVar = QSession.variable("sessionVar")
+    dataStore.pm.query[Slot].filter(slotCand.teacher.eq(teacherVar).and(teacherVar.id.eq(this.teacher.id)).and(
+        slotCand.session.eq(sessionVar)).and(sessionVar.id.eq(this.session.id))).orderBy(slotCand.startTime.asc).executeList()
   }
   
   def allOpenings(): List[Opening] = {
@@ -89,7 +92,11 @@ object TeacherActivation extends UsesDataStore {
   val cand = QTeacherActivation.candidate
 
   def get(teacher: Teacher, session: Session): Option[TeacherActivation] = {
-    dataStore.pm.query[TeacherActivation].filter(cand.teacher.eq(teacher).and(cand.session.eq(session))).executeOption()
+    val teacherVar = QTeacher.variable("teacherVar")
+    val sessionVar = QSession.variable("sessionVar")
+    dataStore.pm.query[TeacherActivation].filter(cand.teacher.eq(teacherVar).and(
+        teacherVar.id.eq(teacher.id)).and(cand.session.eq(sessionVar).and(
+            sessionVar.id.eq(session.id)))).executeOption()
   }
   
   def getById(id: Long): Option[TeacherActivation] = {

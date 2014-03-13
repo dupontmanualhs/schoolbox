@@ -79,7 +79,8 @@ class Section extends UsesDataStore with DbEquality[Section] {
   
   def teacherAssignments(): List[TeacherAssignment] = {
     val cand = QTeacherAssignment.candidate
-    dataStore.pm.query[TeacherAssignment].filter(cand.section.eq(this)).executeList()
+    val teacherVar = QTeacher.variable("teacherVar")
+    dataStore.pm.query[TeacherAssignment].filter(cand.section.eq(teacherVar).and(teacherVar.id.eq(this.id))).executeList()
   }
 
   // TODO: figure out which teachers to get in what order
@@ -91,7 +92,8 @@ class Section extends UsesDataStore with DbEquality[Section] {
 
   def enrollments(includeDrops: Boolean = false): List[StudentEnrollment] = {
     val cand = QStudentEnrollment.candidate
-    val filter = if (includeDrops) cand.section.eq(this) else cand.section.eq(this).and(cand.end.eq(null.asInstanceOf[java.sql.Date]))
+    val sectionVar = QSection.variable("sectionVar")
+    val filter = if (includeDrops) cand.section.eq(sectionVar).and(sectionVar.id.eq(this.id)) else cand.section.eq(sectionVar).and(sectionVar.id.eq(this.id))).and(cand.end.eq(null.asInstanceOf[java.sql.Date]))
     val enrs = dataStore.pm.query[StudentEnrollment].filter(filter).executeList()
     enrs.sortWith((enr1: StudentEnrollment, enr2: StudentEnrollment) => (enr1.end, enr2.end) match {
       case (Some(d), None) => false
@@ -102,8 +104,9 @@ class Section extends UsesDataStore with DbEquality[Section] {
   
   def numStudents(): Long = {
     val cand = QStudentEnrollment.candidate
+    val sectionVar = QSection.variable("sectionVar")
     dataStore.pm.query[StudentEnrollment].filter(
-        cand.section.eq(this).and(
+        cand.section.eq(sectionVar).and(sectionVar.id.eq(this.id)).and(
             cand.end.eq(null.asInstanceOf[java.sql.Date]))).executeResultUnique(true, cand.count()).asInstanceOf[Long]
   }
 }

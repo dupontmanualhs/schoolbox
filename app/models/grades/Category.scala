@@ -7,6 +7,7 @@ import org.datanucleus.query.typesafe._
 import util.PersistableFile
 import models.courses.Section
 import config.users.UsesDataStore
+import models.courses.QSection
 
 @PersistenceCapable(detachable = "true")
 class Category {
@@ -39,7 +40,9 @@ class Category {
 object Category extends UsesDataStore {
   def forSection(section: Section): List[Category] = {
     val cand = QCategory.candidate
-    dataStore.pm.query[Category].filter(cand.section.eq(section)).executeList
+    val sectionVar = QSection.variable("sectionVar")
+    dataStore.pm.query[Category].filter(cand.section.eq(sectionVar).and(
+        sectionVar.id.eq(section.id))).executeList
   }
 
 }

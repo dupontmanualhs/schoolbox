@@ -149,7 +149,8 @@ class Slot extends UsesDataStore with DbEquality[Slot] {
     val endTime = this.endTime
     dataStore.execute { implicit pm =>
       val cand = QSlot.candidate
-	  val slots = pm.query[Slot].filter(cand.teacher.eq(this.teacher).and(cand.session.eq(this.session))).executeList()
+      val teacherVar = QSlot.variable("teacherVar")
+	  val slots = pm.query[Slot].filter(cand.teacher.eq(teacherVar).and(teacherVar.id.eq(this.id)).and(cand.session.eq(this.session))).executeList()
       !slots.exists(s => (startTime >= s.startTime && startTime <
       	s.endTime) || (endTime > s.startTime && endTime <= s.endTime))
     }
@@ -166,6 +167,7 @@ object Slot extends UsesDataStore {
   }
   
   def getBySessionAndGuardian(session: Session, guardian: Guardian): List[Slot] = dataStore.execute { pm =>
+    //Todo Figure this one out
     pm.query[Slot].filter(cand.session.eq(session).and(
         cand.guardians.contains(guardian))).orderBy(cand.startTime.asc).executeList()
   }

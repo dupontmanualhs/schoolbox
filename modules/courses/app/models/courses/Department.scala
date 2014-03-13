@@ -28,7 +28,8 @@ object Department extends UsesDataStore {
   def getOrCreate(name: String): Department = {
     val pm = dataStore.pm
     val cand = QDepartment.candidate
-    pm.query[Department].filter(cand.name.eq(name)).executeOption() match {
+    val nameVar = QName.variable.eq("nameVar")
+    pm.query[Department].filter(cand.name.eq(nameVar).and(nameVar.id.eq(name.id))).executeOption() match {
       case Some(dept) => dept
       case None => {
         val dept = new Department(name)

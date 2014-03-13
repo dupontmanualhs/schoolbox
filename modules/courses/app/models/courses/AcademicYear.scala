@@ -30,7 +30,8 @@ class AcademicYear extends DbEquality[AcademicYear] {
 object AcademicYear extends UsesDataStore {
   def getByName(name: String): Option[AcademicYear] = {
     val cand = QAcademicYear.candidate
-    dataStore.pm.query[AcademicYear].filter(cand.name.eq(name)).executeOption()
+    val nameVar = QName.variable("nameVar")
+    dataStore.pm.query[AcademicYear].filter(cand.name.eq(nameVar).and(nameVar.id.eq(name.id))).executeOption()
   }
 }
 

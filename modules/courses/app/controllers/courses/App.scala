@@ -51,7 +51,8 @@ class App @Inject()(implicit config: Config) extends Controller with UsesDataSto
       val assignments: List[TeacherAssignment] = {
         val sectVar = QSection.variable("sectVar")
         val cand = QTeacherAssignment.candidate
-        pm.query[TeacherAssignment].filter(cand.teacher.eq(teacher).and(cand.section.eq(sectVar)).and(sectVar.terms.contains(term))).executeList()
+        val teacherVar = QTeacher.variable("teacherVar")
+        pm.query[TeacherAssignment].filter(cand.teacher.eq(teacherVar).and(teacherVar.id.eq(teacher.id)).and(cand.section.eq(sectVar)).and(sectVar.terms.contains(term))).executeList()
       }
       val hasAssignments = assignments.size != 0
       val sections: List[Section] = assignments.map(_.section)
@@ -91,8 +92,9 @@ class App @Inject()(implicit config: Config) extends Controller with UsesDataSto
       val enrollments: List[StudentEnrollment] = {
         val sectVar = QSection.variable("sectVar")
         val cand = QStudentEnrollment.candidate()
-        pm.query[StudentEnrollment].filter(cand.student.eq(student).and(
-            cand.end.eq(null.asInstanceOf[java.sql.Date])).and(
+        val studentVar = QStudent.variable("studentVar")
+        pm.query[StudentEnrollment].filter(cand.student.eq(studentVar).and(studentVar.id.eq(
+            student.id)).and(cand.end.eq(null.asInstanceOf[java.sql.Date])).and(
             cand.section.eq(sectVar)).and(sectVar.terms.contains(term))).executeList()
       }
       val hasEnrollments = enrollments.size != 0
@@ -189,7 +191,9 @@ class App @Inject()(implicit config: Config) extends Controller with UsesDataSto
       case None => NotFound(config.notFound(s"There is no course with the master number '${masterNumber}'."))
       case Some(course) => {
         val cand = QSection.candidate
-        val sections = dataStore.pm.query[Section].filter(cand.course.eq(course)).executeList()
+        val courseVar = QCourse.variable("courseVar")
+        val sections = dataStore.pm.query[Section].filter(cand.course.eq(courseVar).and(
+            courseVar.id.eq(course.id))).executeList()
         Ok(templates.courses.SectionList(course, sections))
       }
     }

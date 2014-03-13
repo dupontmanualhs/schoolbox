@@ -42,7 +42,8 @@ class Teacher extends Role {
     val taVar = QTeacherAssignment.variable("taVar")
     val sectVar = QSection.variable("sectVar")
     val seVar = QStudentEnrollment.variable("seVar")
-    dataStore.pm.query[Student].filter(taVar.teacher.eq(this).and(taVar.section.eq(sectVar)).and(
+    val teacherVar = QTeacher.variable("teacherVar")
+    dataStore.pm.query[Student].filter(taVar.teacher.eq(teacherVar).and(teacherVar.id.eq(this.id)).and(taVar.section.eq(sectVar)).and(
         sectVar.terms.contains(term)).and(seVar.section.eq(sectVar)).and(
         seVar.end.eq(null.asInstanceOf[java.sql.Date])).and(
         seVar.student.eq(studCand))).executeList().sortBy(_.formalName)

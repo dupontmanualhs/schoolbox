@@ -7,6 +7,7 @@ import models.courses.Student
 import util.Helpers._
 import scala.xml._
 import config.users.UsesDataStore
+import models.courses.QStudent
 
 
 
@@ -84,7 +85,8 @@ object Locker extends UsesDataStore {
   def getByStudent(stu: Student): Option[Locker] = {
     dataStore.execute { epm =>
       val cand = QLocker.candidate
-      epm.query[Locker].filter(cand.student.eq(stu)).executeOption()
+      val studentId = QStudent.variable("studentId")
+      epm.query[Locker].filter(cand.student.eq(studentId).and(studentId.id.eq(stu.id))).executeOption()
     }
   }
   

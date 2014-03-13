@@ -28,7 +28,8 @@ object Room extends UsesDataStore {
   def getOrCreate(name: String): Room = {
     val pm = dataStore.pm
     val cand = QRoom.candidate
-    pm.query[Room].filter(cand.name.eq(name)).executeOption() match {
+    val nameVar = QName.variable("nameVar")
+    pm.query[Room].filter(cand.name.eq(nameVar).and(nameVar.id.eq(name.id))).executeOption() match {
       case Some(room) => room
       case None => {
         val room = new Room(name)

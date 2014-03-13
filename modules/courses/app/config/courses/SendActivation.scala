@@ -40,7 +40,7 @@ object SendActivation extends UsesDataStore with Logging {
     val taCand = QTeacherAssignment.candidate()
     val userVar = QUser.variable("userVar")
     val teachersWithClasses = dataStore.execute { pm =>
-      val teachers = pm.query[Teacher].filter(cand.user.eq(userVar).and(
+      val teachers = pm.query[Teacher].filter(cand.user.eq(userVar))).and(
           userVar.isActive.eq(true))).orderBy(userVar.last.asc, userVar.first.asc).executeList()
       teachers.filterNot(t => pm.query[TeacherAssignment].filter(taCand.teacher.eq(t)).executeList().isEmpty)
     }  
@@ -48,7 +48,7 @@ object SendActivation extends UsesDataStore with Logging {
       if (!Activation.getByUser(t.user).isDefined) {
         toTeacher(t)
       }
-    })
+    }
   }
   
   def toGuardian(guardian: Guardian): Option[String] = {
@@ -199,7 +199,7 @@ object SendActivation extends UsesDataStore with Logging {
        |respond to them as quickly as possible!
        |
        |Thanks!
-       |Todd O'Bryan and the Special Topics in Computer Science classes
+       |Todd O'Bryan and the Special Topics in Computer Science Classes
        |The Schoolbox Team
      """.stripMargin
 

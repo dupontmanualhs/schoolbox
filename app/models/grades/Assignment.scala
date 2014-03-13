@@ -8,6 +8,8 @@ import util.PersistableFile
 import models.courses.{ Section, Student }
 import org.joda.time.{ LocalDate, LocalDateTime }
 import config.users.UsesDataStore
+import models.courses.QStudent
+import models.courses.QSection
 
 @PersistenceCapable(detachable = "true")
 class Assignment extends UsesDataStore {
@@ -54,7 +56,9 @@ class Assignment extends UsesDataStore {
 
   def getTurnin(student: Student): Option[Turnin] = {
     val cand = QTurnin.candidate
-    dataStore.pm.query[Turnin].filter(cand.assignment.eq(this).and(cand.student.eq(student))).executeOption
+    val studentVar = QStudent.variable("studentVar")
+    dataStore.pm.query[Turnin].filter(cand.assignment.eq(studentVar).and(
+        studentVar.id.eq(student.id))).executeOption
   }
 
 }
@@ -62,13 +66,19 @@ class Assignment extends UsesDataStore {
 object Assignment extends UsesDataStore {
   def forCategory(category: Category): List[Assignment] = {
     val cand = QAssignment.candidate
-    dataStore.pm.query[Assignment].filter(cand.category.eq(category)).executeList
+    val categoryVar = QCategory.variable("categoryVar")
+    dataStore.pm.query[Assignment].filter(cand.category.eq(categoryVar).and(
+        categoryVar.id.eq(category.id))).executeList
   }
 
   def getAssignments(section: Section): List[Assignment] = {
     val cand = QAssignment.candidate
     val varble = QCategory.variable("sect")
-    dataStore.pm.query[Assignment].filter(cand.category.eq(varble).and(varble.section.eq(section))).executeList
+    val varbleVar = QCategory.variable("varbleVar")
+    val sectionVar = QSection.variable("sectionVar")
+    dataStore.pm.query[Assignment].filter(cand.category.eq(varble.id).and(
+        varbleVar.id.eq(varble.id)).and(varble.section.eq(sectionVar.id)).and(
+            sectionVar.id.eq(section.id))).executeList
   }
 }
 

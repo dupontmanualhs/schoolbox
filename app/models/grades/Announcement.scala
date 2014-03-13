@@ -9,6 +9,7 @@ import models.courses.Section
 import models.users.Role
 import org.joda.time.LocalDateTime
 import config.users.UsesDataStore
+import models.courses.QSection
 
 @PersistenceCapable(detachable="true")
 class Announcement {
@@ -69,7 +70,9 @@ trait QAnnouncement extends PersistableExpression[Announcement] {
 object Announcement extends UsesDataStore {
   def getAnnouncements(section: Section): List[Announcement] = {
       val cand = QAnnouncement.candidate
-      dataStore.pm.query[Announcement].filter(cand.section.eq(section)).executeList
+      val sectionVar = QSection.variable("sectionVar")
+      dataStore.pm.query[Announcement].filter(cand.section.eq(sectionVar).and(
+          sectionVar.id.eq(section.id))).executeList
   }
 }
 
