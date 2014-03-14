@@ -112,7 +112,6 @@ object TestData extends UsesDataStore {
       pm.makePersistentAll(periods)
 
       //makeCourses(debug)
-      if (debug) println("Creating Departments and Courses...")
       val scienceDept = new Department("Science")
       val englishDept = new Department("English")
       val mathematicsDept = new Department("Mathematics")
