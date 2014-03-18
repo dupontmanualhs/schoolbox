@@ -19,6 +19,8 @@ GET     /assets/*file               		controllers.Assets.at(path="/public", file
 #Courses
 -> /courses				courses.Routes
 
+-> /fieldtrips			fieldtrips.Routes
+
 #Assignments
 GET     /assignments/doTask/:taskId             @controllers.Assignments.doTask(taskId: Long)
 POST    /assignments/check/:taskId              @controllers.Assignments.check(taskId: Long)

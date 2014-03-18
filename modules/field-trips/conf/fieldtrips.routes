@@ -1,0 +1,4 @@
+GET /createFieldTrip						@controllers.fieldtrips.App.createFieldTrip
+POST /createFieldTrip						@controllers.fieldtrips.App.createFieldTripP
+
+GET /fieldTripCreated						@controllers.fieldtrips.App.fieldTripCreated
