@@ -14,7 +14,7 @@ package object templates {
     def apply(pageTitle: String, extraScripts: STag*)(content: STag*)(implicit req: VisitRequest[_]): Html =
       Html("<!DOCTYPE html>") += Html(html(
         head(
-          meta.attr("name" -> "viewport", "content" -> "width=device-width, initial-scale=1")
+          meta.attr("name" -> "viewport", "content" -> "width=device-width, initial-scale=1.0")
           title(pageTitle),
           //Theme.themePick(req.visit.user),
           (headAfterTitleBeforeScripts ++ extraScripts)),
@@ -41,6 +41,7 @@ package object templates {
         link.rel("stylesheet").href(controllers.routes.WebJarAssets.at(controllers.WebJarAssets.locate("jquery-ui.css"))),
         link.rel("stylesheet").href(controllers.routes.WebJarAssets.at(controllers.WebJarAssets.locate("bootstrap.css"))),
         link.rel("stylesheet").href(controllers.routes.Assets.at("stylesheets/ourstyle.css")),
+        link.rel("stylesheet").href(controllers.routes.Assets.at("stylesheets/bootstrap/bootstrap-responsive.css")),
         link.rel("stylesheet").href(controllers.routes.WebJarAssets.at(controllers.WebJarAssets.locate("datepicker.css"))),
         link.rel("stylesheet").href(controllers.routes.WebJarAssets.at(controllers.WebJarAssets.locate("bootstrap-timepicker.min.css"))),
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements. -->,
@@ -73,7 +74,7 @@ package object templates {
         div.cls("navbar-inner")(
           div.cls("container")(
             a.cls("btn", "btn-navbar").attr("data-toggle" -> "collapse", "data-target" -> ".nav-collapse")(
-              span.cls("icon-bar"), span.cls("icon-bar"), span.cls("icon-bar")),
+                span.cls("icon-th-list")),
             a.cls("brand").href(controllers.routes.App.index)("Schoolbox (v0.1)"),
             div.cls("nav-collapse", "collapse").id("main-menu")(
               req.visit.menu))))
