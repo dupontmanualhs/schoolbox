@@ -27,7 +27,7 @@ class Course extends DbEquality[Course] {
   def department: Department = _department
   def department_=(theDepartment: Department) { _department = theDepartment }
   
-  @Persistent
+  /*@Persistent
   private[this] var _canConference: Boolean = _
   def canConference: Boolean = _canConference
   def canConference_=(b: Boolean) {_canConference = b}
@@ -38,10 +38,13 @@ class Course extends DbEquality[Course] {
     _masterNumber = masterNumber
     _department = department
     _canConference = canConf
-  }
+  }*/
   
   def this(name: String, masterNumber: String, department: Department) = {
-    this(name, masterNumber, department, true)
+    this()
+    _name = name
+    _masterNumber = masterNumber
+    _department = department
   }
   
   override def toString = s"${name} (${masterNumber})"
@@ -67,8 +70,8 @@ trait QCourse extends PersistableExpression[Course] {
   private[this] lazy val _department: ObjectExpression[Department] = new ObjectExpressionImpl[Department](this, "_department")
   def department: ObjectExpression[Department] = _department
   
-  private[this] lazy val _canConference: BooleanExpression = new BooleanExpressionImpl(this, "_canConference")
-  def canConference: BooleanExpression = _canConference
+  //private[this] lazy val _canConference: BooleanExpression = new BooleanExpressionImpl(this, "_canConference")
+  //def canConference: BooleanExpression = _canConference
 }
 
 object QCourse {
