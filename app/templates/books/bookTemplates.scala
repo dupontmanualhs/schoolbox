@@ -22,6 +22,8 @@ package object books {
   private[books] val focusFirstTextField = script(Unparsed("""$(document).ready(function() { $("input:text:first").focus(); })"""))
 
   def displayImage(isbn: String): scalatags.STag = {
+   // val path = "http://covers.openlibrary.org/b/isbn/" + isbn + ".jpg"
+   // val url = "http://covers.openlibrary.org/b/isbn/" + isbn + ".jpg"
     val path = "public/images/books/" + isbn + ".jpg"
     val url = "/assets/images/books/" + isbn + ".jpg"
     val f = new File(path)
@@ -294,12 +296,13 @@ package object books {
   }
 
   object inventory {
-    def apply(rows: List[(String, String, String, String, String)])(implicit req: VisitRequest[_], config: Config) = {
+    def apply(rows: List[(String, String, String, String, String, String)])(implicit req: VisitRequest[_], config: Config) = {
       config.main("Inventory")(
         div.cls("page-header")(
           h2("Inventory")), table.cls("table", "table-striped", "table-condensed")(
           thead(
             tr(
+              th("Cover"),
               th("Title"),
               th("Total Copies"),
               th("Copies Checked Out"),
@@ -308,11 +311,12 @@ package object books {
           tbody(
             rows.map { row =>
               tr(
-                td(row._1),
+                td(img.src(row._1)),
                 td(row._2),
                 td(row._3),
                 td(row._4),
-                td(row._5))
+                td(row._5),
+                td(row._6))
             })))
     }
   }

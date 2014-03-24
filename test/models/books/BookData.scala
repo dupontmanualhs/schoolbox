@@ -20,7 +20,8 @@ object BookData {
     Some(1.9),
     true,
     Some(LocalDateTime.now()),
-    Some("http://ecx.images-amazon.com/images/I/41H3AX9Q8ZL._SY300_.jpg"))
+    Some(s"http://covers.openlibrary.org/b/isbn/Title.isbn.jpg"))
+    //Some("http://ecx.images-amazon.com/images/I/41H3AX9Q8ZL._SY300_.jpg"))
   val tmi = new Title(
     "The Mind's I",
     Some("Douglas R. Hofstadter"),
