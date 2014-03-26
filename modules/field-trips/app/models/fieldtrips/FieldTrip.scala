@@ -10,6 +10,7 @@ import models.users.DbEquality
 import models.courses.Teacher
 import org.joda.time.LocalDate
 import scala.collection.JavaConverters._
+import models.fieldtrips.Housing
 
 @PersistenceCapable(detachable="true")
 class FieldTrip extends UsesDataStore with DbEquality[FieldTrip] {
@@ -28,9 +29,14 @@ class FieldTrip extends UsesDataStore with DbEquality[FieldTrip] {
   def teacher_=(theTeacher: Teacher) { _teacher = theTeacher }
   
   @Persistent
-  private[this] var _dates: java.util.List[java.sql.Date] = _
-  def dates: List[LocalDate] = _dates.asScala.toList.map(LocalDate.fromDateFields(_))
-  def dates_=(theDates: List[LocalDate]) { _dates = theDates.map(d => new java.sql.Date(d.toDateTimeAtStartOfDay.getMillis)).asJava }
+  private[this] var _startDate: java.sql.Date = _
+  def startDate: LocalDate = LocalDate.fromDateFields(_startDate)
+  def startDate_=(theStartDate: LocalDate) { _startDate = new java.sql.Date(theStartDate.toDateTimeAtStartOfDay.getMillis)}
+  
+   @Persistent
+  private[this] var _endDate: java.sql.Date = _
+  def endDate: LocalDate = LocalDate.fromDateFields(_endDate)
+  def endDate_=(theEndDate: LocalDate) { _endDate =  new java.sql.Date(theEndDate.toDateTimeAtStartOfDay.getMillis)}
   
   @Persistent
   private[this] var _transportation: Int = _
@@ -39,8 +45,19 @@ class FieldTrip extends UsesDataStore with DbEquality[FieldTrip] {
 
   @Persistent
   @Column(allowsNull="true")
-  private[this] var _housing: String = _
-  def housing: Option[String] = if (_housing == null) None else Some(_housing)
-  def housing_=(theHousing: Option[String]) { _housing = theHousing.getOrElse(null) }
+  private[this] var _housing: Int = _
+  def housing: Housing.Value = Housing(_housing)
+  def housing_=(theHousing: Housing.Housing) { _housing = theHousing.id }
+  
+  def this(destination: String, teacher: Teacher, startdate:LocalDate,endDate: LocalDate, 
+      transportation: Transport.Transport, housing: Housing.Housing) {
+    this()
+    destination_=(destination)
+    teacher_=(teacher)
+    startDate_=(startDate)
+    endDate_= (endDate)
+	transportation_=(transportation)
+    housing_=(housing)
+  }
   
 }
