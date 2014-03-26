@@ -38,6 +38,8 @@ class Complex(val re: Real, val im: Real) extends Number {
     case that: Complex => this.canEqual(that) && this.re == that.re && this.im == that.im
     case _ => false
   }
+  
+  def conjugate = Complex(re, -im)
 }
 
 object Complex {

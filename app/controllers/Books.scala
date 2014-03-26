@@ -82,7 +82,9 @@ class Books @Inject()(implicit config: Config) extends Controller with UsesDataS
           // Next Copy Number
           val cand = QCopy.candidate
           val pCand = QPurchaseGroup.variable("pCand")
-          val currentCopies = pm.query[Copy].filter(cand.purchaseGroup.eq(pCand).and(pCand.title.eq(t))).executeList()
+          val titleVar = QTitle.variable("titleVar")
+          // fixed eq here (delete this comment when whole file done)
+          val currentCopies = pm.query[Copy].filter(cand.purchaseGroup.eq(pCand).and(pCand.title.eq(titleVar).and(titleVar.id.eq(t.id)))).executeList()
           val newStart = currentCopies.length match {
             case 0 => 1
             case _ => {

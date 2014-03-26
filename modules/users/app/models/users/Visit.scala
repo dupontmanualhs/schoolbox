@@ -92,6 +92,11 @@ class Visit {
     if (_sessionItems.containsKey(key)) Some(_sessionItems.get(key).asInstanceOf[T])
     else None
   }
+  
+  def removeAs[T](key: String): Option[T] = {
+    if (_sessionItems.containsKey(key)) Some(_sessionItems.remove(key).asInstanceOf[T])
+    else None
+  }
 }
 
 object Visit extends UsesDataStore {
@@ -103,7 +108,7 @@ object Visit extends UsesDataStore {
   
   def getFromRequest[A](implicit req: Request[A], config: Config): Visit = {
     req.session.get("visit").flatMap(
-        Visit.getByUuid(_)).filter(!_.isExpired).getOrElse(
+        Visit.getByUuid(_)).filterNot(_.isExpired).getOrElse(
             new Visit(System.currentTimeMillis + Visit.visitLength, None, None))
   }
   
