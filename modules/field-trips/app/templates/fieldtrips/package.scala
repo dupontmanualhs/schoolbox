@@ -13,11 +13,7 @@ package object fieldtrips {
   
   object FieldTripCreated {
     def apply()(implicit req: VisitRequest[_], config: Config) = {
-<<<<<<< Updated upstream
       config.main("Your field trip was created")()
-=======
-      config.main("Your field trip was created")()      
->>>>>>> Stashed changes
     }
   }
 

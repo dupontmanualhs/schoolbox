@@ -74,7 +74,7 @@ object ApplicationBuild extends Build {
           routesImport += "scala.language.reflectiveCalls",
           resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
           lessEntryPoints <<= baseDirectory(customLessEntryPoints)) ++
-      Nucleus.settings): _*).dependsOn(users, courses)
+      Nucleus.settings): _*).dependsOn(users, courses, fieldTrips)
 }
 
 object Nucleus {
