@@ -68,20 +68,21 @@ object ManualData extends UsesDataStore with Logging {
     val props = new Properties()
     dataStore.storeManager.validateSchema(classes, props)
     // de-activate everyone and re-activate only the users in the data dump
-    markAllUsersInactive()
-    purgeCurrentSchedule()
-    loadStudents()
-    loadGuardians()
-    loadTeachers()
-    fixTeacherAccounts()
-    loadCourses()
-    loadSections()
-    loadEnrollments()
-    //createConferenceEvent()
-    //addPermissions()
+    markAllUsersInactive()//logging done
+    purgeCurrentSchedule()//logging done
+    loadStudents()//logging done
+    loadGuardians()//logging done
+    loadTeachers()//logging done
+    fixTeacherAccounts()//logging done
+    loadCourses()//logging done
+    loadSections()//logging done
+    loadEnrollments()//logging done
+    createConferenceEvent()//logging done
+    addPermissions()//logging done
   }
   
   def fixTeacherAccounts() {
+    logger.info("fixing teacher accounts...")
     usernameToEmail.foreach {
       case (username: String, email: String) => {
         dataStore.withTransaction { pm => 
@@ -95,6 +96,7 @@ object ManualData extends UsesDataStore with Logging {
           }
         }
       }
+      
     }
   }
   
@@ -115,20 +117,26 @@ object ManualData extends UsesDataStore with Logging {
   }
   
   def addPermissions() {
-    val tobryan1 = Teacher.getByUsername("tobryan1").get
-    val gregKuhn = Teacher.getByUsername("gkuhn2").get
+    val siteManager = Teacher.getByUsername("tobryan1").get
+    val bookManager = Teacher.getByUsername("gkuhn2").get
     val manageBooks = Book.Permissions.Manage
     val manageConferences = Conferences.Permissions.Manage
     val manageUsers = User.Permissions.Manage
     val changePasswords = User.Permissions.ChangePassword
-    tobryan1.addPermission(manageBooks)
-    tobryan1.addPermission(manageConferences)
-    tobryan1.addPermission(manageUsers)
-    tobryan1.addPermission(changePasswords)
-    gregKuhn.addPermission(manageBooks)
+    siteManager.addPermission(manageBooks)
+    logger.debug(s"gave user $siteManager permission $manageBooks")
+    siteManager.addPermission(manageConferences)
+    logger.debug(s"gave user $siteManager permission $manageConferences")
+    siteManager.addPermission(manageUsers)
+    logger.debug(s"gave user $siteManager permission $manageUsers")
+    siteManager.addPermission(changePasswords)
+    logger.debug(s"gave user $siteManager permission $changePasswords")
+    bookManager.addPermission(manageBooks)
+    logger.debug(s"gave user $bookManager permission $manageBooks")
   }
 
   def markAllUsersInactive() {
+    logger.info("deactivating all users...")
     dataStore.withTransaction { pm =>
       val users = pm.query[User].executeList()
       users foreach { user =>
@@ -136,6 +144,7 @@ object ManualData extends UsesDataStore with Logging {
         pm.makePersistent(user)
       }
     }
+    logger.info("all users marked inactive")
   }
 
   def createConferenceEvent() {
@@ -146,9 +155,11 @@ object ManualData extends UsesDataStore with Logging {
         None, new LocalTime(7, 40, 0), new LocalTime(14, 20, 0))
       pm.makePersistent(session)
     }
+    logger.info("Conference event created")
   }
 
   def purgeCurrentSchedule() {
+    logger.info("purging schedule...")
     val sectCand = QSection.candidate()
     val termVar = QTerm.variable("termVar")
     val enrCand = QStudentEnrollment.candidate()
@@ -173,6 +184,7 @@ object ManualData extends UsesDataStore with Logging {
         deleteSection.execute(id)
       }
     })
+    logger.info("schedule purged")
   }
 
   def loadStudents() {
@@ -224,6 +236,7 @@ object ManualData extends UsesDataStore with Logging {
           }
         }
       })
+      logger.info("all students imported.")
     }
   }
 
@@ -236,9 +249,9 @@ object ManualData extends UsesDataStore with Logging {
   def loadGuardians() {
     val doc = XML.load(new XZInputStream(getClass.getResourceAsStream(s"$folder/Parents.xml.xz")))
     val contacts = doc \\ "student"
-    logger.info("Importing guardians...")
     val cand = QGuardian.candidate
     val userVar = QUser.variable("userVar")
+    logger.info("Importing guardians...")
     contacts foreach ((contact: Node) => {
       dataStore.withTransaction { implicit pm =>
         val studentNumber = (contact \ "@student.studentNumber").text
@@ -297,6 +310,7 @@ object ManualData extends UsesDataStore with Logging {
         }
       }
     })
+    logger.info("guardians imported")
   }
 
   def loadTeachers() {
@@ -340,6 +354,7 @@ object ManualData extends UsesDataStore with Logging {
           }
         }
       })
+      logger.info("teachers imported")
     }
   }
 
@@ -395,6 +410,7 @@ object ManualData extends UsesDataStore with Logging {
           pm.makePersistent(dbCourse)
         }
       })
+      logger.info("courses imported")
     }
   }
 
@@ -463,6 +479,7 @@ object ManualData extends UsesDataStore with Logging {
         sectionsDone += sectionId
       }
     })
+    logger.info("sections imported")
   }
 
   def loadEnrollments() {
@@ -476,6 +493,7 @@ object ManualData extends UsesDataStore with Logging {
     val unknownSections = mutable.Set[String]()
     val doc = XML.load(new XZInputStream(getClass.getResourceAsStream(s"$folder/Schedule.xml.xz")))
     val fileEnrollments = doc \\ "student"
+    logger.info("Importing enrollments...")
     fileEnrollments foreach ((enrollment: Node) => {
       dataStore.withTransaction { implicit pm =>
         val sectionId = asIdNumber((enrollment \ "@courseSection.sectionID").text)
@@ -515,6 +533,7 @@ object ManualData extends UsesDataStore with Logging {
         dbEnrollmentIds foreach (id => {
           pm.query[StudentEnrollment].filter(enrCand.id.eq(id)).executeOption().map(pm.deletePersistent(_))
         })
+        logger.info("enrollments loaded")
       }
     }
     if (!unknownSections.isEmpty) {
