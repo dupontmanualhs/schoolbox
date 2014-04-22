@@ -138,8 +138,8 @@ object TestData extends UsesDataStore {
       val eng3B = new Course("English 3B", "224424342", englishDept)
       val usHistB = new Course("US History B", "432239242", socialStudiesDept)
       val worldHistB = new Course("World History B", "424239242", socialStudiesDept)
-      val planning = new Course("Planning", "909989980", miscDept, false)
-      val studySkills = new Course("Study Skills", "324342440", miscDept, false)
+      val planning = new Course("Planning", "909989980", miscDept)
+      val studySkills = new Course("Study Skills", "324342440", miscDept)
       pm.makePersistentAll(List(scienceDept, englishDept, mathematicsDept, socialStudiesDept,
         bioA, chemA, alg1A, alg2A, geoA, eng1A, eng2A, eng3A, usHistA, worldHistA,
         bioB, chemB, alg1B, alg2B, geoB, eng1B, eng2B, eng3B, usHistB, worldHistB,
