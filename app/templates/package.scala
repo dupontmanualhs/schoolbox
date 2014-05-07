@@ -14,7 +14,7 @@ package object templates {
     def apply(pageTitle: String, extraScripts: STag*)(content: STag*)(implicit req: VisitRequest[_]): Html =
       Html("<!DOCTYPE html>") += Html(html(
         head(
-          meta.attr("name" -> "viewport", "content" -> "width=device-width, initial-scale=1.0")
+          //meta.attr("name" -> "viewport", "content" -> "width=device-width, initial-scale=1.0")
           title(pageTitle),
           //Theme.themePick(req.visit.user),
           (headAfterTitleBeforeScripts ++ extraScripts)),
